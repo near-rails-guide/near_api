@@ -1,5 +1,4 @@
 # frozen_string_literal: true
-require 'base_convert'
 
 class NearApi::Base58
   BASE = '123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz'
