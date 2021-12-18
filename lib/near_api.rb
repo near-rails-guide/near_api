@@ -15,5 +15,12 @@ require_relative "near_api/base58"
 
 module NearApi
   class Error < StandardError; end
-  # Your code goes here...
+
+  def self.config
+    @config ||= Config.new
+  end
+
+  def config=(config)
+    @config = config
+  end
 end
