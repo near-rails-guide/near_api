@@ -4,7 +4,7 @@ class NearApi::Action
   include Borsh
 
   borsh signer_id: :string,
-        key_pair: { key_type: :u8, public_key: 32 },
+        key: { key_type: :u8, public_key: 32 },
         nonce: :u64,
         receiver_id: :string,
         block_hash: 32,
@@ -18,48 +18,49 @@ class NearApi::Action
     new(*args).async
   end
 
-  def initialize(receiver_id, actions, config: NearApi.config)
+  def initialize(receiver_id, actions, config: NearApi.config, key: NearApi.key)
+    @key = key
     @receiver_id = receiver_id
-    @actions = Array[actions]
+    @actions = Array(actions)
     @config = config
     @api = NearApi::Api.new(config)
   end
 
   def call
-    call_api('broadcast_tx_commit')
+    signature = key.sign(message.digest)
+    call_api('broadcast_tx_commit', message.message, signature)
   end
 
   def async
-    call_api('broadcast_tx_commit')
+    signature = key.sign(message.digest)
+    call_api('broadcast_tx_async', message.message, signature)
+  end
+
+  def message
+    @message ||= begin
+      message = to_borsh
+      Struct.new(:message, :digest).new(message, Digest::SHA256.digest(message))
+    end
+  end
+
+  def call_api(method, message, signature)
+    signed_transaction = message + Borsh::Integer.new(key.key_type, :u8).to_borsh + signature
+    api.json_rpc(method, [Base64.strict_encode64(signed_transaction)])
   end
 
   private
 
-
-  def call_api(method)
-    msg = to_borsh
-    digest = Digest::SHA256.digest(msg)
-    signature = key_pair.sign(digest)
-
-    signed_transaction = msg + Borsh::Integer.new(key_pair.key_type, :u8).to_borsh + signature
-    api.json_rpc(method, [Base64.strict_encode64(signed_transaction)])
-  end
-
   def signer_id
-    config.signer_id
-  end
-
-  def key_pair
-    config.key_pair
+    key.signer_id
   end
 
   def nonce
-    api.nonce + 1
+    api.nonce(key) + 1
   end
 
   def block_hash
     api.block_hash
   end
 
-  attr_reader :receiver_id, :actions, :config, :api
+  attr_reader :receiver_id, :actions, :key, :config, :api
 end

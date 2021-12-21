@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class NearApi::Api
-  def initialize(config = Config.new)
+  def initialize(config = NearApi.config)
     @config = config
   end
 
@@ -14,20 +14,20 @@ class NearApi::Api
     JSON.parse(Net::HTTP.get(uri))
   end
 
-  def view_access_key
+  def view_access_key(key)
     call(
       'query',
       {
         "request_type": "view_access_key",
-        "account_id": config.signer_id,
-        "public_key": NearApi::Base58.encode(config.key_pair.public_key),
+        "account_id": key.signer_id,
+        "public_key": NearApi::Base58.encode(key.public_key),
         "finality": 'optimistic'
       }
     )
   end
 
-  def nonce
-    view_access_key['result']['nonce']
+  def nonce(key)
+    view_access_key(key)['result']['nonce']
   end
 
   def block_hash
