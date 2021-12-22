@@ -30,7 +30,7 @@ class NearApi::Key
                     public_key
                   end
       bytestring = NearApi::Base58.decode(key_value)
-      @public_key = Ed25519::VerifyKey.new(bytestring)
+      @public_key = Ed25519::VerifyKey.new(bytestring).to_bytes
     end
   end
 
