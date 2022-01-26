@@ -1,3 +1,4 @@
+![tests](https://github.com/near-rails-guide/near_api/actions/workflows/ci.yml/badge.svg)
 # NearApi
 
 Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/near_api`. To experiment with that code, run `bin/console` for an interactive prompt.
