@@ -26,6 +26,17 @@ class NearApi::Api
     )
   end
 
+  def view_access_key_list(account_id, finality: 'optimistic')
+    call(
+      'query',
+      {
+        "request_type": "view_access_key_list",
+        "account_id": account_id,
+        "finality": finality
+      }
+    )
+  end
+
   def view_account(account_id, finality: 'optimistic')
     call(
       'query',
