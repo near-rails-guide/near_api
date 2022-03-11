@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require 'ed25519'
 
 class NearApi::Key
@@ -9,7 +10,7 @@ class NearApi::Key
                  public_key: ENV.fetch('NEAR_PUBLIC_KEY', nil))
     @signer_id = signer_id
     if (!key_pair.nil? && !public_key.nil?) || (key_pair.nil? && public_key.nil?)
-      raise ArgumentError, "please specify one of: key_pair or public_key"
+      raise ArgumentError, 'please specify one of: key_pair or public_key'
     end
 
     unless key_pair.nil?

@@ -25,3 +25,7 @@ jobs:
         run: bundle install --path vendor/bundle --jobs 4 --retry 3
       - name: Rspec
         run: bundle exec rspec
+        env:
+          NEAR_SIGNER_ID: ${{ secrets.NEAR_SIGNER_ID }}
+          NEAR_KEYPAIR: ${{ secrets.NEAR_KEYPAIR }}
+          NEAR_NODE_URL: ${{ secrets.NEAR_NODE_URL }}
