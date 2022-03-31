@@ -16,4 +16,13 @@ RSpec.describe NearApi::Base58 do
       expect(described_class.decode('QzuGBrxU')).to eq('012345')
     end
   end
+
+  it 'is consistent' do
+    65536.times do |i|
+      bin = [i].pack('Q<')
+      str = NearApi::Base58.encode(bin)
+      bin2 = NearApi::Base58.decode(str)
+      expect(bin2).to eq(bin)
+    end
+  end
 end

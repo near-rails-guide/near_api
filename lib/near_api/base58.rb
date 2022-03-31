@@ -4,18 +4,22 @@ class NearApi::Base58
   BASE = '123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz'
 
   def self.encode(bytestring)
-    number = bytestring.unpack("C*").reverse.each_with_index.inject(0) do |sum, (byte, index)|
-      sum + byte * (256 ** index)
+    number = bytestring.unpack('C*').reverse.each_with_index.inject(0) do |sum, (byte, index)|
+      sum + byte * (256**index)
     end
-    tos number
+    nzeroes = bytestring.bytes.find_index { |b| b != 0 } || bytestring.length - 1
+    prefix = BASE[0] * nzeroes
+    prefix + tos(number)
   end
 
   def self.decode(encoded_string)
     integer = toi encoded_string
-    to_bytestring(integer)
+    nzeroes = encoded_string.chars.find_index { |c| c != BASE[0] } || encoded_string.length - 1
+    prefix = nzeroes < 0 ? '' : 0.chr * nzeroes
+    prefix + to_bytestring(integer)
   end
 
-  def self.toi(string=to_s, base=58, digits=BASE)
+  def self.toi(string = to_s, base = 58, digits = BASE)
     return nil if string.empty?
 
     integer = 0
@@ -26,9 +30,10 @@ class NearApi::Base58
     integer
   end
 
-  def self.tos(integer=to_i, base=58, digits=BASE)
+  def self.tos(integer = to_i, base = 58, digits = BASE)
     return '' if integer.nil?
     return digits[0] if integer == 0
+
     string = ''
     while integer > 0
       integer, index = integer.divmod(base)
@@ -38,6 +43,8 @@ class NearApi::Base58
   end
 
   def self.to_bytestring(number)
+    return 0.chr if number == 0
+
     integer = number
     result = ''
     while integer > 0
