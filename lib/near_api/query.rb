@@ -5,12 +5,12 @@ class NearApi::Query
     @api = NearApi::Api.new(config)
   end
 
-  def function(account_id, method_name, args, finality: 'final')
+  def call(account_id, method_name, args, finality: 'optimistic')
     params = {
-      request_type: 'call_function',
-      finality: finality,
       account_id: account_id,
       method_name: method_name,
+      finality: finality,
+      request_type: 'call_function',
       args_base64: Base64.strict_encode64(args.to_json)
     }
     call_api(params)

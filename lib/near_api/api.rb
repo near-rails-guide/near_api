@@ -14,14 +14,36 @@ class NearApi::Api
     JSON.parse(Net::HTTP.get(uri))
   end
 
-  def view_access_key(key)
+  def view_access_key(key, finality: 'optimistic')
     call(
       'query',
       {
-        "request_type": "view_access_key",
+        "request_type": 'view_access_key',
         "account_id": key.signer_id,
         "public_key": NearApi::Base58.encode(key.public_key),
-        "finality": 'optimistic'
+        "finality": finality
+      }
+    )
+  end
+
+  def view_access_key_list(account_id, finality: 'optimistic')
+    call(
+      'query',
+      {
+        "request_type": 'view_access_key_list',
+        "account_id": account_id,
+        "finality": finality
+      }
+    )
+  end
+
+  def view_account(account_id, finality: 'optimistic')
+    call(
+      'query',
+      {
+        "request_type": 'view_account',
+        "account_id": account_id,
+        "finality": finality
       }
     )
   end
@@ -37,7 +59,7 @@ class NearApi::Api
   def json_rpc(method, payload)
     json_rpc_payload = {
       id: 'dontcare',
-      jsonrpc: "2.0",
+      jsonrpc: '2.0',
       method: method,
       params: payload
     }
@@ -55,4 +77,3 @@ class NearApi::Api
 
   attr_reader :config
 end
-

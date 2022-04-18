@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require 'spec_helper'
 
 RSpec.describe NearApi::Base58 do
@@ -18,7 +19,7 @@ RSpec.describe NearApi::Base58 do
   end
 
   it 'is consistent' do
-    65536.times do |i|
+    65_536.times do |i|
       bin = [i].pack('Q<')
       str = NearApi::Base58.encode(bin)
       bin2 = NearApi::Base58.decode(str)
