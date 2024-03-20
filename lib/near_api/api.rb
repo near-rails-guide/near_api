@@ -65,7 +65,7 @@ class NearApi::Api
     }
 
     uri = URI.parse(config.node_url)
-    req = Net::HTTP::Post.new(uri.to_s)
+    req = Net::HTTP::Post.new(uri.path == '' ? '/' : uri.path)
     req.body = json_rpc_payload.to_json
     req['Content-Type'] = 'application/json'
     response = Net::HTTP.new(uri.host, uri.port).tap { |http| http.use_ssl = true }.request(req)
