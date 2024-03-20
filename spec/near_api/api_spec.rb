@@ -5,7 +5,7 @@ require 'spec_helper'
 RSpec.describe NearApi::Api do
   let(:api) { described_class.new(config) }
   let(:config) do
-    NearApi::Config.new(node_url: 'https://rpc.ci-testnet.near.org')
+    NearApi::Config.new(node_url: 'https://rpc.testnet.near.org')
   end
   let(:key) { NearApi.key }
 
