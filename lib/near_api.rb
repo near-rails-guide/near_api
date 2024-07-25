@@ -39,7 +39,7 @@ module NearApi
     @key ||= Key.new
   end
 
-  def key=(key)
+  def self.key=(key)
     @key = key
   end
 end
