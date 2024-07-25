@@ -13,7 +13,7 @@ module NearApi
 
       def initialize(method_name, args, gas: 100_000_000_000_000, amount: 0)
         @method_name = method_name
-        @args = args.is_a?(String) ? args : args.to_json
+        @args = args.is_a?(::String) ? args : args.to_json
         @gas = gas
         @amount = amount
       end
