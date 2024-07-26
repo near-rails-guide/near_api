@@ -9,8 +9,8 @@ class NearApi::Key
                  key_pair: ENV.fetch('NEAR_KEYPAIR', nil),
                  public_key: ENV.fetch('NEAR_PUBLIC_KEY', nil))
     @signer_id = signer_id
-    if (!key_pair.nil? && !public_key.nil?) || (key_pair.nil? && public_key.nil?)
-      raise ArgumentError, 'please specify one of: key_pair or public_key'
+    if key_pair.nil? && public_key.nil?
+      raise ArgumentError, 'please specify key_pair or public_key'
     end
 
     unless key_pair.nil?
@@ -31,7 +31,11 @@ class NearApi::Key
                     public_key
                   end
       bytestring = NearApi::Base58.decode(key_value)
-      @public_key = Ed25519::VerifyKey.new(bytestring).to_bytes
+      verify_key = Ed25519::VerifyKey.new(bytestring).to_bytes
+      unless @public_key.nil?
+        raise ArgumentError, 'public_key does not match keypair' if @public_key != verify_key
+      end
+      @public_key = verify_key
     end
   end
 
