@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 RSpec.shared_context :shared_methods do
-  let(:account_id) { "#{SecureRandom.hex}.#{NearApi.key.signer_id}" }
+  let(:account_id) { "#{SecureRandom.hex[0..10]}.#{NearApi.key.signer_id}" }
   let(:account_key) do
     NearApi::Key.new(account_id, key_pair: NearApi::Base58.encode(Ed25519::SigningKey.generate.keypair))
   end
