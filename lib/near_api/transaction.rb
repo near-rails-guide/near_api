@@ -27,14 +27,9 @@ module NearApi
       @api = NearApi::Api.new(config)
     end
 
-    def call
+    def call(wait_until: Status::EXECUTED_OPTIMISTIC)
       signature = key.sign(message.digest)
-      call_api('broadcast_tx_commit', message.message, signature)
-    end
-
-    def async
-      signature = key.sign(message.digest)
-      call_api('broadcast_tx_async', message.message, signature)
+      call_api(message.message, signature, wait_until: wait_until)
     end
 
     def message
@@ -48,9 +43,10 @@ module NearApi
       NearApi::Base58.encode(message.digest)
     end
 
-    def call_api(method, message, signature)
+    def call_api(message, signature, wait_until: Status::EXECUTED_OPTIMISTIC)
       signed_transaction = message + Borsh::Integer.new(key.key_type, :u8).to_borsh + signature
-      api.json_rpc(method, [Base64.strict_encode64(signed_transaction)])
+      params = { signed_tx_base64: Base64.strict_encode64(signed_transaction), wait_until: wait_until }
+      api.json_rpc('send_tx', params)
     end
 
     private
